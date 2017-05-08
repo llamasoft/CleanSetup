@@ -1,0 +1,39 @@
+# Languages
+perl
+php
+python
+ruby
+
+# Utilities
+bind-utils      # host, dig, nslookup
+curl
+wget
+bash-completion
+chere
+colordiff
+diffutils
+dos2unix
+jq
+libicu-devel    # uconv
+p7zip           # 7z
+procps-ng       # pidof, watch, pgrep
+psmisc          # pstree, killall
+sqlite3
+vim
+xxd
+
+# Development
+git
+gcc-g++
+autoconf
+automake
+libtool
+make
+gdb
+
+# Libraries
+gmp
+libcrypt-devel
+libgmp-devel
+openssl
+openssl-devel

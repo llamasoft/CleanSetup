@@ -1,0 +1,10 @@
+BoldAsFont=no
+FontHeight=10
+Columns=140
+Rows=40
+Font=Lucida Console
+FontSmoothing=default
+Blue=64,64,255
+CursorType=block
+CursorBlinks=no
+CursorColour=0,255,64

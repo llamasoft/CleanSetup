@@ -1,0 +1,79 @@
+# vim: set syntax=sh
+
+
+################################### Aliases ####################################
+
+alias ls='ls --color=auto'
+alias ll='ls -al'
+alias lrt='ls -Alrt'
+alias l25='ls -Alrt | tail -25'
+alias lsd='ls -ald . */'
+
+alias  grep='grep  --color=auto'
+alias fgrep='fgrep --color=auto'
+alias egrep='egrep --color=auto'
+
+alias bim='vim'
+alias view='vim -R'
+
+alias dstats='du -csh */ .'
+
+
+# Useful when using tail -f
+addtime() { gawk '{ print strftime("[%H:%M:%S]"), $0; fflush(); }'; }
+
+
+# List files over 1MB in size, formatted in a way where "| sort -n" is convenient
+bigfiles() { find "${1:-.}" -type f -size +1M -printf "%10k kb\t%p\n"; }
+
+
+# List the last N files of a directory
+l() {
+    n="${1:-25}"
+    shift
+
+    ls -Alrt "$@" | tail -"${n}"
+}
+
+
+
+################################## Functions ###################################
+
+# Prints $1 (default 4) entries per line into a table, each column $2 (default 20) characters wide
+nprint() {
+    per_line="${1:-4}"
+    col_size="${2:-20}"
+
+    awk -vper_line="${per_line}" '{
+        if ( NR % per_line == 0 ) {
+            eol = "\n"
+        } else {
+            eol = "\t"
+        }
+        gsub(/^[ \t]+/, "", $0);
+        gsub(/[ \t]+$/, "", $0);
+        printf "%s%s", $0, eol;
+    }' | column -t -c "${col_size}"
+}
+
+
+# Returns the number of parameters passed, useful for counting wildcard matches
+count() { echo "$#"; }
+
+
+# Returns the total size of the passed file names
+fsize() {
+	perl -e '
+        my @units = ("B", "KB", "MB", "GB", "TB");
+        my $sum = 0; my $unit_index = 0;
+        for my $file_name (@ARGV) {
+            my $file_size = -s $file_name;
+            $sum += $file_size;
+        }
+        while ( $sum >= 1024 ) { $sum /= 1024; $unit_index += 1; }
+        printf("%.1f %s\n", $sum, $units[$unit_index]);
+    ' -- "$@"
+}
+
+
+set_title() { printf "\033]0;%s\007" "$*"; }

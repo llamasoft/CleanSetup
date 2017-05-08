@@ -1,0 +1,8 @@
+# vim: syntax=sh
+
+# Annoying to type characters
+export NL='
+'
+export CR=$(printf '\r')
+export TAB=$(printf '\t')
+export FF=$(printf '\f')
