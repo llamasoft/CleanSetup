@@ -5,12 +5,11 @@ python
 ruby
 
 # Utilities
-bind-utils      # host, dig, nslookup
-curl
-wget
 bash-completion
+bind-utils      # host, dig, nslookup
 chere
 colordiff
+curl
 diffutils
 dos2unix
 jq
@@ -20,20 +19,24 @@ procps-ng       # pidof, watch, pgrep
 psmisc          # pstree, killall
 sqlite3
 vim
+wget
 xxd
 
 # Development
-git
-gcc-g++
 autoconf
 automake
+gcc-g++
+gdb
+git
 libtool
 make
-gdb
 
 # Libraries
 gmp
 libcrypt-devel
 libgmp-devel
+libjpeg-devel
 openssl
 openssl-devel
+python-devel
+zlib-devel

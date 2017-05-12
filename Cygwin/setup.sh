@@ -32,8 +32,8 @@ echo "Applying Cygwin tweaks..."
 chere -ic -t mintty
 
 # Disables automatically adding Windows paths to Cygwin
-if [[ -z "${CYGWIN_NOWINPATH}" ]]; then
-    /cygdrive/c/windows/setx CYGWIN_NOWINPATH 1
+if [[ -z "${CYGWIN_NOWINPATH}" ]] && command -v setx >/dev/null 2>&1; then
+    setx CYGWIN_NOWINPATH 1
 fi
 
 
@@ -49,19 +49,8 @@ echo ""
 
 echo "Installing pip..."
 pip_url="https://bootstrap.pypa.io/get-pip.py"
-time curl -O "${parallel_url}" && chmod +x "get-pip.py" && python "get-pip.py"
+time curl -O "${pip_url}" && chmod +x "get-pip.py" && python "get-pip.py"
 
 echo ""
 echo "Installation complete"
 
-
-####################### Misc Tweaks ########################
-#
-# # Adds "Open Cygwin Here" shell option
-# chere -ic -t mintty
-#
-# # Disables automatically adding Windows paths to Cygwin
-# if [[ -z "${CYGWIN_NOWINPATH}" ]]; then
-#     /cygdrive/c/windows/setx CYGWIN_NOWINPATH 1
-# fi
-#
