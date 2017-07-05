@@ -35,4 +35,8 @@ fi
 
 
 # Shellcheck options
-export SHELLCHECK_OPTS="--color=auto -e SC1091,SC2009"
+#   SC1090 - Can't follow non-constant source
+#   SC1091 - Can't find sourced file
+#   SC2002 - Useless cat
+#   SC2009 - Consider using pgrep
+export SHELLCHECK_OPTS="--color=auto -e SC1090,SC1091,SC2002,SC2009"

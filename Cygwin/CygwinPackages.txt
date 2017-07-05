@@ -17,12 +17,14 @@ libicu-devel    # uconv
 p7zip           # 7z
 procps-ng       # pidof, watch, pgrep
 psmisc          # pstree, killall
+pv
 sqlite3
 vim
 wget
 xxd
 
 # Development
+astyle
 autoconf
 automake
 gcc-g++

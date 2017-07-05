@@ -4,7 +4,6 @@ AWK
 FileDiffs
 Increment Selection
 Pretty JSON
-Print to HTML
 StringEncode
 Whitespace
 SublimeHighlight
