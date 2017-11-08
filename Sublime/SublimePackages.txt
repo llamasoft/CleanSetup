@@ -7,3 +7,4 @@ Pretty JSON
 StringEncode
 Whitespace
 SublimeHighlight
+RenameBuffer

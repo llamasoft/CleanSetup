@@ -39,21 +39,72 @@ l() {
 
 ################################## Functions ###################################
 
-# Prints $1 (default 4) entries per line into a table, each column $2 (default 20) characters wide
+# Converts lines into a fixed column width table.
+# Each line has $1 columns (default 4)
+# Each column is $2 characters wide (default 20)
+# Comment lines (starting with #) are skipped
 nprint() {
     per_line="${1:-4}"
     col_size="${2:-20}"
 
-    awk -vper_line="${per_line}" '{
-        if ( NR % per_line == 0 ) {
+    gawk -v per_line="${per_line}" -v col_size="${col_size}" '
+    function trim(str) {
+        sub(/^[ \t]+/, "", str)
+        sub(/[ \t]+$/, "", str)
+        return str
+    }
+    {
+        # Skipping comment lines and resetting offset
+        if ( $0 ~ /^#/ ) {
+            if ( eol != "\n" ) { printf("\n") }
+            print trim($0)
+            offset = 0
+            next
+        }
+
+        if ( ++offset % per_line == 0 ) {
             eol = "\n"
         } else {
-            eol = "\t"
+            eol = ""
         }
-        gsub(/^[ \t]+/, "", $0);
-        gsub(/[ \t]+$/, "", $0);
-        printf "%s%s", $0, eol;
-    }' | column -t -c "${col_size}"
+
+        # Print line left-justified to col_size width
+        printf("%-*s%s", col_size, trim($f), eol)
+    }'
+}
+
+
+# Same as nprint, but splits fields within lines as well.
+nprint2() {
+    per_line="${1:-4}"
+    col_size="${2:-20}"
+
+    gawk -v per_line="${per_line}" -v col_size="${col_size}" '
+    function trim(str) {
+        sub(/^[ \t]+/, "", str)
+        sub(/[ \t]+$/, "", str)
+        return str
+    }
+    {
+        # Skipping comment lines and resetting offset
+        if ( $0 ~ /^[ \t]*#/ ) {
+            if ( eol != "\n" ) { printf("\n") }
+            print trim($0)
+            offset = 0
+            next
+        }
+
+        for ( f = 1; f <= NF; f++ ) {
+            if ( ++offset % per_line == 0 ) {
+                eol = "\n"
+            } else {
+                eol = ""
+            }
+
+            # Print line left-justified to col_size width
+            printf("%-*s%s", col_size, trim($f), eol)
+        }
+    }'
 }
 
 
