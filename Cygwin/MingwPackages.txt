@@ -1,0 +1,41 @@
+# Languages
+perl
+python3
+
+# Utilities
+mingw-w64-x86_64-astyle
+bash-completion
+colordiff
+curl
+diffutils
+dos2unix
+man             # Really? Why is this not default?
+p7zip           # 7z
+parallel
+procps-ng       # pidof, watch, pgrep
+psmisc          # pstree, killall
+pv
+vim
+wget
+
+# Development
+autoconf
+automake
+gdb
+git
+libtool
+make
+mingw-w64-x86_64-astyle
+mingw-w64-x86_64-gcc
+mingw-w64-x86_64-cmake
+mingw-w64-x86_64-pkg-config
+python3-pip
+
+# Libraries
+gmp
+gmp-devel
+libcrypt
+libcrypt-devel
+openssl
+openssl-devel
+zlib-devel

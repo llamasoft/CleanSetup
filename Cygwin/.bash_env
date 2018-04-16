@@ -12,6 +12,7 @@ set -o notify
 set -o vi
 shopt -s checkwinsize
 shopt -s no_empty_cmd_completion
+export LS_COLORS="${LS_COLORS}:ow=0;34"
 
 
 # Editing

@@ -1,5 +1,6 @@
 ﻿#include <Misc.au3>
 #NoTrayIcon
+#RequireAdmin
 
 _Singleton("AU3_Shortcuts")
 
@@ -72,4 +73,7 @@ EndFunc
 
 Func Cygwin()
     Run("C:\cygwin64\bin\mintty.exe -i /Cygwin-Terminal.ico -")
+    If @error Then
+        MsgBox(0, "Error", "Failed to launch with error " & @error)
+    EndIf
 EndFunc
