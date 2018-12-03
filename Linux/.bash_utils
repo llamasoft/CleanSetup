@@ -3,7 +3,12 @@
 
 ################################### Aliases ####################################
 
-alias ls='ls --color=auto'
+if [[ "$(uname)" != "Darwin" ]]; then
+    alias ls='ls --color=auto'
+else
+    alias ls='ls -G'
+fi
+
 alias ll='ls -al'
 alias lrt='ls -Alrt'
 alias l25='ls -Alrt | tail -25'
@@ -17,6 +22,8 @@ alias bim='vim'
 alias view='vim -R'
 
 alias dstats='du -csh */ .'
+
+alias glog='git log --stat'
 
 
 # Useful when using tail -f

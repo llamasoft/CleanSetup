@@ -1,0 +1,14 @@
+# Vim all the things!
+set editing-mode vi
+set keymap vi
+set show-mode-in-prompt on
+set vi-cmd-mode-string '[:] '
+set vi-ins-mode-string '[+] '
+
+# Colors
+set colored-stats on
+
+# Auto-completed directories end with "/",
+# but that isn't the default with symlinks
+# that point to directories
+set mark-symlinked-directories on

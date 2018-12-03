@@ -1,10 +1,14 @@
 # vim: syntax=sh
 
+# Prompt formatting
+export PS1='
+\[\e[0;33m\]\u\[\e[0m\]@\[\e[0;32m\]\h\[\e[0m\]:\[\e[0;34m\]\w\[\e[0m\]\$ '
+
 
 # History Options
 shopt -s histappend
-export HISTCONTROL="${HISTCONTROL}${HISTCONTROL+,}ignoredups"
-export HISTIGNORE=$'[ \t]*:[fb]g:exit:ls:rm'
+export HISTCONTROL="${HISTCONTROL}${HISTCONTROL+:}ignoredups"
+export HISTIGNORE=$'[ \t]*:[fb]g:exit:ls:ll:rm'
 
 
 # Shell Options
@@ -41,3 +45,19 @@ fi
 #   SC2002 - Useless cat
 #   SC2009 - Consider using pgrep
 export SHELLCHECK_OPTS="--color=auto -e SC1090,SC1091,SC2002,SC2009"
+
+
+# Apple specific tweaks
+if [[ "$(uname)" == "Darwin" ]]; then
+    export CLICOLOR=1
+fi
+
+
+# Usually under /etc, but brew installs under /usr/local/etc
+for bc in /etc/bash_completion /usr/local/etc/bash_completion; do
+    if [[ -f "${bc}" ]]; then
+        . "${bc}"
+        break
+    fi
+fi
+
