@@ -54,10 +54,17 @@ fi
 
 
 # Usually under /etc, but brew installs under /usr/local/etc
-for bc in /etc/bash_completion /usr/local/etc/bash_completion; do
-    if [[ -f "${bc}" ]]; then
-        . "${bc}"
+for prefix in "" "/usr/local"; do
+    file_path="${prefix}/etc/bash_completion"
+    if [[ -f "${file_path}" ]]; then
+        . "${file_path}"
         break
     fi
+done
+
+
+# Bell alert when long running commands finish
+if [[ -f "${HOME}/bin/prompt_beep.sh" ]]; then
+    . "${HOME}/bin/prompt_beep.sh"
 fi
 
