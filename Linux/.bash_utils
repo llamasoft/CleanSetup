@@ -24,6 +24,10 @@ alias view='vim -R'
 alias dstats='du -csh */ .'
 
 alias glog='git log --stat'
+alias gstat='git status'
+alias gdiff='git diff'
+alias gstaged='git diff --staged'
+alias glast='git diff HEAD~1 HEAD'
 
 
 # Useful when using tail -f
@@ -135,3 +139,41 @@ fsize() {
 
 
 set_title() { printf "\033]0;%s\007" "$*"; }
+
+
+
+########################### Google Cloud/Kubernetes ############################
+
+gauth() {
+    gcloud auth login "$@"
+}
+
+gcreds() {
+    if (( $# >= 1 )); then
+        cluster="${1}"
+        shift
+    else
+        echo "ERROR: cluster name required"
+        return 1
+    fi
+
+    if (( $# >= 1 )); then
+        project=(--project "${2}")
+        shift
+    else
+        project=()
+    fi
+
+    if (( $# >= 1 )); then
+        zone=(--zone "${3}")
+        shift
+    else
+        zone=(--zone "us-west1-a")
+    fi
+
+    gcloud container clusters get-credentials "${cluster}" "${project[@]}" "${zone[@]}" "$@"
+}
+
+gclusters() {
+    gcloud container clusters list "$@"
+}

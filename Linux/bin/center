@@ -1,0 +1,12 @@
+#!/usr/bin/env python2
+
+import argparse
+
+parser = argparse.ArgumentParser()
+parser.add_argument("text", help = "Text to center")
+parser.add_argument("width", nargs = "?", type = int, default = 60, help = "Target padded width for text")
+parser.add_argument("char", nargs = "?", default = "#", help = "Padding character to use")
+args = parser.parse_args()
+
+format_str = "{:" + args.char + "^" + str(args.width) + "s}"
+print format_str.format(args.text)
