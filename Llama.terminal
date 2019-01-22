@@ -598,7 +598,7 @@
 	<key>FontAntialias</key>
 	<false/>
 	<key>ProfileCurrentVersion</key>
-	<real>2.0499999999999998</real>
+	<real>2.0600000000000001</real>
 	<key>SelectionColor</key>
 	<data>
 	YnBsaXN0MDDUAQIDBAUGKyxYJHZlcnNpb25YJG9iamVjdHNZJGFyY2hpdmVyVCR0b3AS
@@ -675,15 +675,27 @@
 	DWUNcA15DYcNiw2SDZsNoA2tDbANvQ3CDcoNzQ3fDeIN5wAAAAAAAAIBAAAAAAAAAC8A
 	AAAAAAAAAAAAAAAAAA3p
 	</data>
+	<key>ShouldLimitScrollback</key>
+	<integer>1</integer>
 	<key>ShowActiveProcessArgumentsInTitle</key>
 	<true/>
+	<key>ShowActiveProcessInTitle</key>
+	<true/>
 	<key>ShowCommandKeyInTitle</key>
+	<false/>
+	<key>ShowDimensionsInTitle</key>
+	<false/>
+	<key>ShowRepresentedURLInTitle</key>
 	<false/>
 	<key>ShowRepresentedURLPathInTitle</key>
 	<true/>
 	<key>ShowShellCommandInTitle</key>
 	<false/>
 	<key>ShowTTYNameInTitle</key>
+	<false/>
+	<key>ShowTerminalInDockIcon</key>
+	<true/>
+	<key>ShowWindowSettingsNameInTitle</key>
 	<false/>
 	<key>TextBoldColor</key>
 	<data>
@@ -839,12 +851,16 @@
 	</data>
 	<key>UseBrightBold</key>
 	<false/>
+	<key>WindowTitle</key>
+	<string>Terminal</string>
 	<key>columnCount</key>
 	<integer>130</integer>
 	<key>name</key>
 	<string>Llama</string>
 	<key>rowCount</key>
 	<integer>40</integer>
+	<key>shellExitAction</key>
+	<integer>1</integer>
 	<key>type</key>
 	<string>Window Settings</string>
 </dict>
