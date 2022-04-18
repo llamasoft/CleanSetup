@@ -1,0 +1,24 @@
+[alias]
+	alias = ! git config --get-regexp ^alias\\. | sed -e s/^alias\\.// -e s/\\ /\\ =\\ /
+	amend = commit --amend
+	last = log -1 HEAD
+	modified = log --all --source --
+	diffs = diff --staged
+	staged = diff --staged
+	stat = log --stat
+	slog = log --stat
+	logs = log --stat
+	find = "!git log --color --patch -S "
+	oops = reset HEAD~1
+	conflicts = diff --name-only --diff-filter=U
+	pushu = push -u origin HEAD
+[user]
+	email = llamasoft@rm-rf.email
+	name = llamasoft
+[push]
+	default = simple
+[pull]
+	ff = only
+[init]
+	defaultBranch = main
+

@@ -1,0 +1,173 @@
+# vim: syntax=sh
+
+case $(uname) in
+    "Linux")    ON_LINUX=1  ;;
+    "Darwin")   ON_MAC=1    ;;
+    "CYGWIN"*)  ON_CYGWIN=1 ;;
+    "MINGW"*)   ON_MINGW=1  ;;
+esac
+
+if ! BREW=$(command -v brew); then
+    for dir in "/usr/local" "/opt/homebrew" "/home/linuxbrew/.linuxbrew"; do
+        if [[ -e "${dir}/bin/brew" ]]; then
+            BREW="${dir}/bin/brew"
+        fi
+    done
+fi
+HAVE_BREW="${BREW+1}"
+
+
+####################### Path Tweaks ########################
+
+path_add() {
+    new_path="${1}"
+    position="${2:-before}"
+    [[ ! -d "${new_path}" ]] && return
+    if ! grep -q -E "(^|:)${new_path}(:|$)" <<< "${PATH}"; then
+        if   [[ "${position}" == "last"  || "${position}" == "after"  ]]; then
+            export PATH="${PATH}${PATH+:}${new_path}"
+        elif [[ "${position}" == "first" || "${position}" == "before" ]]; then
+            export PATH="${new_path}${PATH+:}${PATH}"
+        fi
+    fi
+}
+
+brew_path_add() {
+    package="${1}"
+    position="${2}"
+
+    # Cache the results for a few days because `brew --prefix` is rather slow
+    cache_file="/tmp/brew_${package}.path"
+    if [[ -z $(find "${cache_file}" -type f -mtime -30 2>/dev/null) ]]; then
+        brew_path=$(HOMEBREW_NO_AUTO_UPDATE=1 "${BREW}" --prefix "${package}" 2>/dev/null)
+        echo "${brew_path}" > "${cache_file}"
+    else
+        brew_path=$(cat "${cache_file}")
+    fi
+        
+    if [[ -n "${brew_path}" ]]; then
+        path_add "${brew_path}" "${position}"
+    fi
+}
+
+# Common binary directories
+path_add "/usr/local/bin" "first"
+path_add "/usr/local/sbin" "first"
+
+# Personal ~/bin directory always takes precedence
+path_add "${HOME}/bin" "first"
+
+# Misc binaries
+path_add "${HOME}/.local/bin" "last"
+
+# Go binaries
+path_add "${HOME}/go/bin" "last"
+
+# Python (MacOS)
+if (( ON_MAC )); then
+    for dir in "${HOME}/Library/Python/"*"/bin"; do
+        path_add "${dir}" "last"
+    done
+fi
+
+# Check current directory as last resort
+path_add "." "last"
+
+
+##################### Homebrew Tweaks ######################
+
+if (( HAVE_BREW )); then
+    export HOMEBREW_NO_ANALYTICS=1
+    export HOMEBREW_AUTO_UPDATE_SECS=$(( 60 * 60 ))
+
+    eval "$(HOMEBREW_NO_AUTO_UPDATE=1 "${BREW}" shellenv)"
+
+    brew_path_add "python@2" "first"
+    brew_path_add "python@3" "first"
+fi
+
+
+#################### Environment Tweaks ####################
+
+# Prompt formatting
+export PROMPT_DIRTRIM=8
+export PS1='\[\e]0;\w\a\]
+\[\e[0;33m\]\u\[\e[0m\]@\[\e[0;32m\]\h\[\e[0m\]:\[\e[0;34m\]\w\[\e[0m\]\$ '
+
+
+# History Options
+shopt -s histappend
+export HISTCONTROL="${HISTCONTROL}${HISTCONTROL+:}ignoredups"
+export HISTIGNORE=$'[ \t]*:[fb]g:exit:ls:ll:rm'
+export HISTTIMEFORMAT="%y-%m-%d %T "
+set +o histexpand
+
+
+# Shell Options
+set -o notify
+set -o vi
+shopt -s checkwinsize
+shopt -s no_empty_cmd_completion
+export LS_COLORS="${LS_COLORS}:ow=0;34"
+
+
+# Editing
+export EDITOR=$(command -v 'vim')
+export VISUAL=$(command -v 'vim')
+
+
+# Performance (grep, sort, etc)
+export LC_ALL="C.UTF-8"
+
+
+# Cygwin-specific Windows paths
+if (( ON_CYGWIN )); then
+    export DESKTOP="${USERPROFILE}/Desktop"
+    export DOCUMENTS="${USERPROFILE}/Documents"
+fi
+
+
+# Shellcheck options
+#   SC1090 - Can't follow non-constant source
+#   SC1091 - Can't find sourced file
+#   SC2002 - Useless cat
+#   SC2009 - Consider using pgrep
+export SHELLCHECK_OPTS="--color=auto -e SC1090,SC1091,SC2002,SC2009"
+
+
+# Apple specific tweaks
+if (( ON_MAC )); then
+    export CLICOLOR=1
+fi
+
+
+# jEnv initialization
+if command -v "jenv" &>/dev/null; then
+    path_add "${HOME}/.jenv/bin" "first"
+    eval "$(jenv init -)"
+fi
+
+
+# Ripgrep configuration file
+# If this file doesn't exist, ripgrep will throw an error,
+# so defining this value is conditional on the file existing.
+if [[ -s "${HOME}/.ripgreprc" ]]; then
+    export RIPGREP_CONFIG_PATH="${HOME}/.ripgreprc"
+fi
+
+
+# Bash completion is usually under /etc, but brew installs under ${HOMEBREW_PREFIX}
+for prefix in "" "${HOMEBREW_PREFIX}"; do
+    file_path="${prefix}/etc/bash_completion"
+    if [[ -f "${file_path}" ]]; then
+        . "${file_path}"
+        break
+    fi
+done
+
+
+# Bell alert when long running commands finish
+if [[ -f "${HOME}/bin/prompt_beep.sh" ]]; then
+    . "${HOME}/bin/prompt_beep.sh"
+fi
+

@@ -1,0 +1,6 @@
+black
+numpy
+pycryptodome
+requests
+tqdm
+yq

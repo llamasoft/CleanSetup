@@ -1,5 +1,0 @@
-[
-    { "keys": ["ctrl+shift+a"], "command": "alignment" },
-    { "keys": ["ctrl+shift+2"], "command": "set_setting", "args": {"setting": "tab_size", "value": 2}},
-    { "keys": ["ctrl+shift+4"], "command": "set_setting", "args": {"setting": "tab_size", "value": 4}}
-]

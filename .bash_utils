@@ -10,6 +10,7 @@ else
 fi
 
 alias ll='ls -al'
+alias lh='ls -alh'
 alias lrt='ls -Alrt'
 alias l25='ls -Alrt | tail -25'
 alias lsd='ls -ald . */'
@@ -19,36 +20,47 @@ alias fgrep='fgrep --color=auto'
 alias egrep='egrep --color=auto'
 
 alias bim='vim'
+alias vsafe='vim -u NONE'
 alias view='vim -R'
 
-alias dstats='du -csh */ .'
-
-alias glog='git log --stat'
-alias gstat='git status'
-alias gdiff='git diff'
-alias gstaged='git diff --staged'
-alias glast='git diff HEAD~1 HEAD'
 
 
-# Useful when using tail -f
+################################## Functions ###################################
+
+# Generates a handful of good password candidates.
+pwgen() {
+    tr -cd '[:alnum:]_.-' < /dev/urandom \
+    | fold -b -w "${LEN:-16}" \
+    | grep '[[:lower:]]' | grep '[[:upper:]]' | grep '[[:digit:]]' | grep '[[:punct:]]' \
+    | grep '^[[:alpha:]]' \
+    | grep '[[:alnum:]]$' \
+    | grep -vE '(.)\1' \
+    | head -n "${QTY:-5}"
+}
+
+
+div() {
+    echo ""
+    echo "============================================================"
+    echo ""
+}
+
+
+# Change to the root of the current git repo
+groot() {
+    if git_root=$(git rev-parse --show-toplevel 2>/dev/null); then
+        pushd "${git_root}"
+    fi
+}
+
+
+# Useful when using tail -f when `ts` isn't available.
 addtime() { gawk '{ print strftime("[%H:%M:%S]"), $0; fflush(); }'; }
 
 
 # List files over 1MB in size, formatted in a way where "| sort -n" is convenient
 bigfiles() { find "${1:-.}" -type f -size +1M -printf "%10k kb\t%p\n"; }
 
-
-# List the last N files of a directory
-l() {
-    n="${1:-25}"
-    shift
-
-    ls -Alrt "$@" | tail -"${n}"
-}
-
-
-
-################################## Functions ###################################
 
 # Converts lines into a fixed column width table.
 # Each line has $1 columns (default 4)
@@ -138,42 +150,67 @@ fsize() {
 }
 
 
+easy_cat() {
+    for file in "$@"; do
+        if [[ ! -f "${file}" ]]; then
+            continue
+        fi
+
+        mime_type=$(file --brief --mime "${file}")
+        case "${mime_type}" in
+            *"bzip2"*) bunzip2 -c "${file}" ;;
+            *"gzip"*)  gunzip  -c "${file}" ;;
+            *"xz"*)    unxz    -c "${file}" ;;
+            *"zstd"*)  unzstd -qc "${file}" ;;
+            *"7z"*)    7z x   -so "${file}" ;;
+            *"zip"*)   unzip   -c "${file}" ;;
+            *)         cat        "${file}" ;;
+        esac
+    done
+}
+
+
+# Returns the frequency of the provided field on each input line
+# Works similar to `sort | uniq -c` except faster for low cardinality input
+freq() {
+    gawk -e '
+        {
+            seen[$pos] += 1
+        }
+
+        END {
+            n = asorti(seen, sorted, "@val_num_asc")
+            for (i = 1; i <= n; i++) {
+                key = sorted[i]
+                qty = seen[key]
+                print qty "\t" key
+            }
+        }
+    ' "$@"
+}
+
+
+# Reduces multiple `freq` results down to one by summing counts
+reduce() {
+    gawk -e '
+        {
+            # Extracting $1, leaving $0 as everything else
+            #   https://stackoverflow.com/a/22908787/477563
+            count = $1; $1 = ""; sub(FS, "")
+            key   = $0
+            seen[key] += count
+        }
+
+        END {
+            n = asorti(seen, sorted, "@val_num_asc")
+            for (i = 1; i <= n; i++) {
+                key = sorted[i]
+                qty = seen[key]
+                print qty "\t" key
+            }
+        }
+    ' "$@"
+}
+
+
 set_title() { printf "\033]0;%s\007" "$*"; }
-
-
-
-########################### Google Cloud/Kubernetes ############################
-
-gauth() {
-    gcloud auth login "$@"
-}
-
-gcreds() {
-    if (( $# >= 1 )); then
-        cluster="${1}"
-        shift
-    else
-        echo "ERROR: cluster name required"
-        return 1
-    fi
-
-    if (( $# >= 1 )); then
-        project=(--project "${2}")
-        shift
-    else
-        project=()
-    fi
-
-    if (( $# >= 1 )); then
-        zone=(--zone "${3}")
-        shift
-    else
-        zone=(--zone "us-west1-a")
-    fi
-
-    gcloud container clusters get-credentials "${cluster}" "${project[@]}" "${zone[@]}" "$@"
-}
-
-gclusters() {
-    gcloud container clusters list "$@"
-}
